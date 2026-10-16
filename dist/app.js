@@ -5,18 +5,23 @@ nav.querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{nav.c
 document.querySelectorAll('[data-event]').forEach(link=>link.addEventListener('click',()=>{document.querySelector('select[name="event"]').value=link.dataset.event;}));
 const today=new Date();document.getElementById('year').textContent=today.getFullYear();
 const dateInput=document.getElementById('event-date');
-function validateEventDate(){
- dateInput.setCustomValidity('');if(!dateInput.value)return;
- const match=/^(\d{2})\/(\d{2})\/(\d{4})$/.exec(dateInput.value);
- if(!match){dateInput.setCustomValidity('Enter the date as MM/DD/YYYY.');return;}
- const [,month,day,year]=match.map(Number),chosen=new Date(Date.UTC(year,month-1,day));
- if(chosen.getUTCFullYear()!==year||chosen.getUTCMonth()!==month-1||chosen.getUTCDate()!==day){dateInput.setCustomValidity('Enter a valid calendar date.');return;}
- const current=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
- const part=type=>current.find(value=>value.type===type).value;
- if(year*10000+month*100+day<Number(part('year')+part('month')+part('day')))dateInput.setCustomValidity('Choose today or a future event date.');
+function updateDateMinimum(){
+ const parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+ const part=type=>parts.find(value=>value.type===type).value;
+ dateInput.min=part('year')+'-'+part('month')+'-'+part('day');
 }
+function validateEventDate(){
+ updateDateMinimum();dateInput.setCustomValidity('');if(!dateInput.value)return;
+ const match=/^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.value);
+ if(!match){dateInput.setCustomValidity('Choose a valid event date using the calendar.');return;}
+ const [,year,month,day]=match.map(Number),chosen=new Date(Date.UTC(year,month-1,day));
+ if(chosen.getUTCFullYear()!==year||chosen.getUTCMonth()!==month-1||chosen.getUTCDate()!==day){dateInput.setCustomValidity('Choose a valid calendar date.');return;}
+ if(dateInput.value<dateInput.min)dateInput.setCustomValidity('Choose today or a future event date.');
+}
+updateDateMinimum();
 dateInput.addEventListener('input',validateEventDate);
-dateInput.addEventListener('blur',validateEventDate);
+dateInput.addEventListener('change',validateEventDate);
+dateInput.addEventListener('click',()=>{if(typeof dateInput.showPicker==='function'){try{dateInput.showPicker();}catch{}}});
 document.getElementById('inquiry-form').addEventListener('reset',()=>dateInput.setCustomValidity(''));
 // Pause automatic photo rotation for reduced motion, keyboard focus, or a hidden tab.
 const slideshow=document.querySelector('.hero-photo');

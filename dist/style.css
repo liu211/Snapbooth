@@ -23,3 +23,5 @@
 .hero-tagline{font-family:inherit;font-style:normal;font-size:1.4rem;margin:20px 0 12px;color:var(--green)}.service-area{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.service-area>p:not(.eyebrow){max-width:780px}.hero h1{font-size:clamp(2.5rem,4.5vw,4.5rem);line-height:1.08}@media(max-width:520px){.hero h1{font-size:2.5rem}}
 
 .hand-note{font-family:inherit;font-style:normal}h1 em,h2 em,h3 em{font:inherit}
+
+input[type="date"]{min-width:0;width:100%;min-height:52px;color:var(--ink);font:inherit;color-scheme:light;cursor:pointer}input[type="date"]::-webkit-calendar-picker-indicator{cursor:pointer;padding:5px}
